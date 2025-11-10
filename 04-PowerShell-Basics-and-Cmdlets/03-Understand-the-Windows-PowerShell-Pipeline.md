@@ -1,113 +1,131 @@
-Understand the Windows PowerShell Pipeline
-Step 1. Review Windows PowerShell Pipeline and Its Output
+# 🧠 Understand the Windows PowerShell Pipeline
 
-A pipeline is a chain of one or more commands where the output of one command becomes the input for the next.
+---
 
-Commands in a pipeline are separated by the pipe symbol | and executed left to right.
+## 🧩 Step 1. Review the PowerShell Pipeline and Its Output
 
-Each command line you enter is a single pipeline — PowerShell processes it, displays the output, and waits for the next command.
+A **pipeline** is a chain of one or more commands where the **output of one command becomes the input for the next**.  
+Commands in a pipeline are separated by the pipe symbol (`|`) and executed **left to right**.
 
-Example:
+Each command line you enter is a **single pipeline** — PowerShell processes it, displays the output, and waits for the next command.
 
+### Example
+```powershell
 Get-Service | Where-Object {$_.Status -eq 'Running'} | Select-Object Name, DisplayName
+```
 
+> 💡 **Tip:** You’ll often use `Get-*` commands as input for `Set-*` commands.  
+> `Where` and `Select` are aliases for `Where-Object` and `Select-Object`.
 
-Get-* commands often provide input for Set-* commands.
+---
 
-Where and Select (aliases for Where-Object and Select-Object) filter or select object properties.
+### 🧠 Objects in PowerShell
 
-Objects in PowerShell
-
-PowerShell doesn’t output text — it outputs objects, which are structured pieces of data with properties (attributes) and methods (actions).
+PowerShell doesn’t output text — it outputs **objects**, which are structured pieces of data with **properties** (attributes) and **methods** (actions).
 
 Think of a command’s output like a spreadsheet:
 
-Rows → individual objects
+| Spreadsheet Term | PowerShell Equivalent |
+|------------------|------------------------|
+| Row              | Individual Object      |
+| Column           | Object Property        |
 
-Columns → object properties
-
-Example:
-
+#### Example
+```powershell
 Get-Service
+```
 
+This outputs a **collection of service objects** with properties like `Name`, `DisplayName`, and `Status`.
 
-Outputs a collection of service objects with properties such as Name, DisplayName, and Status.
+**Why this matters:**  
+Unlike text-based shells, PowerShell eliminates the need for text parsing — it passes **structured objects** between commands.
 
-Why this matters:
-Unlike text-based shells, PowerShell eliminates the need for parsing text — it directly passes structured data (objects) between commands.
+---
 
-Step 2. Discover Object Members in PowerShell
+## 🧱 Step 2. Discover Object Members in PowerShell
 
-Objects contain members, including:
+Objects contain **members**, which include:
 
-Properties – Describe attributes (like Name, Status, or ID).
+- **Properties** – Describe object attributes (e.g., `Name`, `Status`, `ID`)
+- **Methods** – Perform actions (e.g., `Stop()`, `Start()`, `Clear()`)
+- **Events** – Trigger when something happens (e.g., file updates, process completion)
 
-Methods – Perform actions (like Stop(), Start(), or Clear()).
-
-Events – Trigger when something happens (like file updates or process completion).
-
-Use Get-Member to see all members of an object:
-
+### View all members of an object
+```powershell
 Get-Service | Get-Member
+```
 
+Alias: `gm`
 
-Alias: gm
+Displays all **properties**, **methods**, and the **type name** of the object  
+(for example: `System.ServiceProcess.ServiceController`).
 
-Displays all properties, methods, and the type name of the object (for example, System.ServiceProcess.ServiceController).
+> ⚠️ **Tip:** Avoid combining `-WhatIf` with `Get-Member`.  
+> `-WhatIf` suppresses output, meaning `Get-Member` receives nothing.
 
-⚠️ Tip: Be careful when piping commands that change system configurations—avoid combining -WhatIf with Get-Member, since it suppresses output.
+---
 
-Step 3. Control the Formatting of Pipeline Output
+## 🎨 Step 3. Control the Formatting of Pipeline Output
 
-PowerShell automatically formats output, but you can control it using formatting cmdlets:
+PowerShell automatically formats output, but you can control it using **formatting cmdlets**:
 
-Cmdlet	Description	Alias
-Format-List	Displays each property on a new line (best for detailed output).	fl
-Format-Table	Displays data in a table (best for comparing multiple objects).	ft
-Format-Wide	Displays a single property in multiple columns (compact).	fw
-Format-Custom	Uses XML for custom layouts (advanced use).	—
-Format-List Example
+| Cmdlet | Description | Alias |
+|---------|--------------|--------|
+| `Format-List` | Displays each property on a new line (best for detailed output). | `fl` |
+| `Format-Table` | Displays data in a table (best for comparing multiple objects). | `ft` |
+| `Format-Wide` | Displays a single property in multiple columns (compact). | `fw` |
+| `Format-Custom` | Uses XML for custom layouts (advanced use). | — |
+
+---
+
+### 🧾 Format-List Example
+```powershell
 Get-Process | Format-List
+```
+- Displays each property on its own line.  
+- Ideal for reviewing many properties at once.
 
+---
 
-Each property is displayed on its own line.
+### 🧮 Format-Table Example
+```powershell
+Get-ADObject -Filter * -Properties * |
+Format-Table -Property Name, ObjectClass, Description -AutoSize -Wrap
+```
+- Displays data in a structured table.  
+- **Common parameters:**
+  - `-AutoSize` adjusts column width.
+  - `-HideTableHeaders` removes headers.
+  - `-Wrap` wraps long text.
 
-Ideal for commands returning many properties.
+---
 
-Format-Table Example
-Get-ADObject -Filter * -Properties * | ft -Property Name, ObjectClass, Description -AutoSize -Wrap
+### 📋 Format-Wide Example
+```powershell
+Get-GPO -All | Format-Wide -Property DisplayName -Column 3
+```
+Displays a single property (like names) across multiple columns —  
+perfect for large, simple lists.
 
+---
 
-Displays data in a structured table with automatic column sizing.
+## ⚡ Quick Reference
 
-Common parameters:
+| Concept | Description |
+|----------|--------------|
+| **Pipeline** | Transfers command output as input to the next command. |
+| **Object** | Structured data with properties and methods. |
+| **Get-Member** | Displays all members (properties/methods) of an object. |
+| **Format-List** | Displays properties line-by-line. |
+| **Format-Table** | Displays properties in columns. |
+| **Format-Wide** | Displays one property in multiple columns. |
 
--AutoSize adjusts column width.
+---
 
--HideTableHeaders removes headers.
+## 🧩 Knowledge Check
 
--Wrap wraps long text.
+**Q1:** What is a pipeline in PowerShell?  
+**A:** A chain of one or more commands where the output from one command passes as input to the next.
 
-Format-Wide Example
-Get-GPO -All | fw -Property DisplayName -Column 3
-
-
-Displays a single property (like names) across multiple columns.
-
-Perfect for large, simple lists.
-
-Quick Reference
-Concept	Description
-Pipeline	Transfers command output as input to the next command.
-Object	Structured data with properties and methods.
-Get-Member	Displays all members (properties/methods) of an object.
-Format-List	Displays properties line-by-line.
-Format-Table	Displays properties in columns.
-Format-Wide	Displays one property in multiple columns.
-Knowledge Check
-
-What is a pipeline in PowerShell?
-➜ A chain of one or more commands where the output from one command passes as input to the next.
-
-Which formatting cmdlet displays each property on a new line?
-➜ Format-List
+**Q2:** Which formatting cmdlet displays each property on a new line?  
+**A:** `Format-List`

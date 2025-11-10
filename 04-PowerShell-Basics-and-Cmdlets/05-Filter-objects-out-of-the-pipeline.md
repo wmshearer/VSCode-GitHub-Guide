@@ -1,73 +1,79 @@
-Filter Objects Out of the Pipeline
-Step 1. Comparison Operators in PowerShell
+# 🧮 Filter Objects Out of the Pipeline
 
-PowerShell uses comparison operators to evaluate objects and determine which ones to keep or remove from the pipeline.
-If the comparison returns True, the object continues through the pipeline; if False, it’s filtered out.
+---
 
-Operator	Description	Case-Sensitive Version
--eq	Equal to	-ceq
--ne	Not equal to	-cne
--gt	Greater than	-cgt
--lt	Less than	-clt
--ge	Greater than or equal to	-cge
--le	Less than or equal to	-cle
-Wildcard Comparison
-Operator	Description
--like	Supports * and ? wildcards
--clike	Case-sensitive version
-Other Advanced Operators
+## 🧩 Step 1. Comparison Operators in PowerShell
 
--in / -contains → Check if an object exists in a collection.
+PowerShell uses **comparison operators** to evaluate objects and determine which ones to keep or remove from the pipeline.  
+If the comparison returns **True**, the object continues through the pipeline; if **False**, it’s filtered out.
 
--as → Tests or converts an object to a specific type.
+| Operator | Description | Case-Sensitive Version |
+|-----------|--------------|------------------------|
+| `-eq` | Equal to | `-ceq` |
+| `-ne` | Not equal to | `-cne` |
+| `-gt` | Greater than | `-cgt` |
+| `-lt` | Less than | `-clt` |
+| `-ge` | Greater than or equal to | `-cge` |
+| `-le` | Less than or equal to | `-cle` |
 
--match / -cmatch → Compare a string to a regular expression.
+### 🌟 Wildcard Comparison
 
-Add -not to reverse logic: e.g. -notlike, -notin.
+| Operator | Description |
+|-----------|-------------|
+| `-like` | Supports `*` and `?` wildcards |
+| `-clike` | Case-sensitive version |
 
-Examples:
+### ⚙️ Other Advanced Operators
 
+- `-in` / `-contains` → Check if an object exists in a collection.  
+- `-as` → Tests or converts an object to a specific type.  
+- `-match` / `-cmatch` → Compare a string to a regular expression.  
+- Prefix with `-not` to reverse logic: `-notlike`, `-notin`.
+
+### 🔹 Examples
+```powershell
 100 -gt 10           # True
 'hello' -eq 'HELLO'  # True (case-insensitive)
 'hello' -ceq 'HELLO' # False (case-sensitive)
+```
 
-Step 2. Basic Filter Syntax
+---
 
-Use Where-Object (alias: Where) to filter objects in the pipeline.
+## ⚙️ Step 2. Basic Filter Syntax
 
-Basic syntax:
+Use **`Where-Object`** (alias: `Where`) to filter objects in the pipeline.
 
+### Basic Syntax
+```powershell
 Get-Service | Where Status -eq 'Running'
+```
 
-
-Where (or Where-Object) filters objects by comparing a property to a value.
-
+`Where` (or `Where-Object`) filters objects by comparing a property to a value.  
 Case-insensitive by default.
 
-Common Issue:
-If a property name is misspelled, PowerShell won’t throw an error — it just returns no results.
-
+### ⚠️ Common Issue
+If a property name is misspelled, PowerShell won’t throw an error — it just returns no results:
+```powershell
 Get-Service | Where Stat -eq 'Running'  # Typo! Returns nothing
+```
 
-Limitations of Basic Syntax
+### Limitations of Basic Syntax
+- Supports **only one comparison** at a time.  
+- Cannot use **nested properties** (e.g., `.Length`).  
+- For complex or multiple conditions → use **advanced syntax**.
 
-Only supports one comparison at a time.
+---
 
-Cannot use nested properties (e.g., .Length).
+## 🧠 Step 3. Advanced Filter Syntax
 
-For complex logic or multiple conditions, use advanced syntax.
-
-Step 3. Advanced Filter Syntax
-
-Advanced syntax uses a filter script block with the -FilterScript parameter.
+Advanced syntax uses a **filter script block** with the `-FilterScript` parameter.  
 This gives you full access to the piped object using:
 
-$PSItem (modern PowerShell)
+- `$PSItem` → modern PowerShell  
+- `$_` → legacy syntax (still works)
 
-$_ (legacy syntax, still widely used)
-
-Equivalent examples:
-
+### Equivalent Examples
+```powershell
 # Basic syntax
 Get-Service | Where Status -eq 'Running'
 
@@ -77,101 +83,118 @@ Get-Service | Where-Object -FilterScript { $PSItem.Status -eq 'Running' }
 # Shorthand with aliases
 Get-Service | Where { $_.Status -eq 'Running' }
 Get-Service | ? { $_.Status -eq 'Running' }
+```
 
+> 💡 Use **single quotes** around strings like `'Running'` to prevent PowerShell from interpreting them as commands.
 
-🧠 Use single quotes around strings like 'Running' to prevent PowerShell from interpreting them as commands.
+---
 
-Combining Multiple Criteria
-
+### 🧮 Combining Multiple Criteria
 You can combine conditions with logical operators:
 
--and
+- `-and`  
+- `-or`  
+- `-not`
 
--or
-
--not
-
-Example:
-
+#### Example
+```powershell
 Get-EventLog -LogName Security -Newest 100 |
 Where { $PSItem.EventID -eq 4672 -and $PSItem.EntryType -eq 'SuccessAudit' }
+```
 
-
-Common Mistakes:
-
+#### 🚫 Common Mistakes
+```powershell
 # Missing $PSItem or $_ before second property
-Get-Process | Where { $PSItem.CPU -gt 30 -and VM -lt 10000 }   ❌
+Get-Process | Where { $PSItem.CPU -gt 30 -and VM -lt 10000 }   # ❌
 
 # Incomplete comparison
-Get-Service | Where { $PSItem.Status -eq 'Running' -or 'Starting' }  ❌
+Get-Service | Where { $PSItem.Status -eq 'Running' -or 'Starting' }  # ❌
+```
 
-
-✅ Corrected:
-
+#### ✅ Corrected
+```powershell
 Get-Process | Where { $PSItem.CPU -gt 30 -and $PSItem.VM -lt 10000 }
 Get-Service | Where { $PSItem.Status -eq 'Running' -or $PSItem.Status -eq 'Starting' }
+```
 
-Filtering True/False Properties
+---
 
-If the property already contains Boolean values (True or False), you can simplify the filter.
+### 🧩 Filtering True/False Properties
+If a property already contains Boolean values (`True` or `False`), simplify your filter:
 
-Examples:
-
+```powershell
 # Both commands do the same thing
 Get-Process | Where { $PSItem.Responding -eq $True }
 Get-Process | Where { $PSItem.Responding }
 
 # Reverse logic with -not
 Get-Process | Where { -not $PSItem.Responding }
+```
 
-Accessing Nested Properties
+---
 
-Advanced filtering can evaluate sub-properties — something the basic syntax can’t do.
+### 🔍 Accessing Nested Properties
+Advanced filtering can evaluate sub-properties (unlike basic syntax).
 
-Example: Show services with names longer than 8 characters
-
+Example: show services with names longer than 8 characters:
+```powershell
 Get-Service | Where { $PSItem.Name.Length -gt 8 }
+```
 
-Step 4. Optimize Filter Performance
+---
 
-Filtering efficiently improves performance, especially with large datasets.
+## ⚡ Step 4. Optimize Filter Performance
 
-Example: Sorting vs Filtering
+Efficient filtering improves performance, especially with large datasets.
+
+### Example: Sorting vs Filtering
+```powershell
 # Less efficient (sorts everything, then filters)
 Get-Block | Sort-Object -Property Letter | Where { $PSItem.Color -eq 'Red' }
 
 # More efficient (filters first, then sorts)
 Get-Block | Where { $PSItem.Color -eq 'Red' } | Sort-Object -Property Letter
+```
 
+💡 **Rule of Thumb:**  
+**Filter Left** → place filters as far left (early) in the pipeline as possible.
 
-💡 Rule of thumb:
+---
 
-Filter Left — place filters as far left (early) in the pipeline as possible.
+### ⏩ When to Skip `Where-Object`
+Some cmdlets have **built-in filtering parameters** that perform better than `Where-Object`.
 
-When to Skip Where-Object
-
-Some cmdlets have built-in filtering parameters that perform better than Where-Object.
-
-Example:
-
+#### Example
+```powershell
 # Less efficient
 Get-ChildItem | Where { -not $PSItem.PSIsContainer }
 
 # Better option
 Get-ChildItem -File
+```
 
+✅ Always check cmdlet help:
+```powershell
+Get-Help <cmdlet> -Full
+```
+Look for built-in filter parameters before defaulting to `Where-Object`.
 
-✅ Always check cmdlet help (Get-Help <cmdlet> -Full) for built-in filters before using Where-Object.
+---
 
-Quick Reference
-Cmdlet	Purpose	Alias
-Where-Object	Filters objects in the pipeline	Where, ?
-$PSItem	Represents the current pipeline object (modern)	$_
-Filter Left	Optimize performance by filtering early	—
-Knowledge Check
+## ⚙️ Quick Reference
 
-Efficient way to list services starting with svc:
-➜ Get-Service -Name svc*
+| Cmdlet | Purpose | Alias |
+|---------|----------|--------|
+| `Where-Object` | Filters objects in the pipeline | `Where`, `?` |
+| `$PSItem` | Represents the current pipeline object (modern) | `$_` |
+| *Filter Left* | Optimize performance by filtering early | — |
 
-Preferred variable for experienced PowerShell users:
-$_
+---
+
+## 🧩 Knowledge Check
+
+**Q1:** Efficient way to list services starting with “svc”?  
+**A:** `Get-Service -Name svc*`
+
+**Q2:** Preferred variable for experienced PowerShell users?  
+**A:** `$_`
