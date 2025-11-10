@@ -12,8 +12,9 @@
 
 ## Execution Policy
 View current policy:
+```powershell
 Get-ExecutionPolicy
-
+```
 Change policy:
 Set-ExecutionPolicy -ExecutionPolicy <PolicyName>
 
@@ -51,15 +52,20 @@ Listing files, Creating users, Modifying system settings, Managing services, and
 ## Cmdlet Structure
 - Cmdlets follow **Verb-Noun** format  
   Examples:  
+
+```powershell
   Get-Process  
   Set-ExecutionPolicy  
   New-Item
+```
 
 Common verbs:
 Get, Set, New, Add, Remove
 
 List all approved verbs:
+```powershell
 Get-Verb
+```
 
 ## Cmdlet Parameters
 - Start with a dash (-)
@@ -69,7 +75,10 @@ Get-Verb
 - **Switch parameters** (like `-Recurse`) act as True/False toggles
 
 Example:
+
+```powershell
 Get-ChildItem -Path C:\ -Recurse
+```
 
 ## Tab Completion
 - Press **Tab** to auto-complete cmdlet names, parameters, or file paths
@@ -79,11 +88,18 @@ Get-ChildItem -Path C:\ -Recurse
 
 ## About Files
 List all conceptual help topics:
+```powershell
 Get-Help about*
+```
 
 Read a specific topic:
+
+```powershell
 Get-Help about_common_parameters
+```
 
 Open in window or browser:
+```powershell
 Get-Help about_common_parameters -ShowWindow
 Get-Help about_common_parameters -Online
+```
