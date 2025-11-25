@@ -1,0 +1,1451 @@
+# AZ-900 — What is Microsoft Azure & Core Azure Fundamentals
+
+## What is Microsoft Azure?
+
+**Microsoft Azure** is a continually expanding set of cloud services that lets you:
+
+- **Build**, **manage**, and **deploy** applications
+- On a **massive global network**
+- Using your **favorite tools and frameworks**
+
+Azure is a **public cloud platform** providing IaaS, PaaS, and SaaS.
+
+### What does Azure offer?
+
+- **Limitless innovation**  
+  - Build intelligent apps using AI, ML, data, and analytics.
+  - Rapidly deliver new features and solutions.
+
+- **Seamless unification**  
+  - Manage infrastructure, data, analytics, and AI on one integrated platform.
+  - Consistent tools and management across services.
+
+- **Innovation on trust**  
+  - Enterprise-grade security and compliance.
+  - Global standards and certifications.
+  - “Trust” is a core selling point in exam questions.
+
+### What can I do with Azure?
+
+Azure provides **100+ services**, enabling you to:
+
+- Run existing apps on **Virtual Machines (VMs)**
+- Use **PaaS** services like Web Apps, Functions, and managed databases
+- Build solutions with:
+  - **AI & ML** (vision, speech, language, prediction)
+  - **Containers & Kubernetes**
+  - **Storage** for massive-scale data
+  - **Networking** and security services
+
+Key examples:
+- Migrate on-prem workloads to VMs
+- Host web apps and APIs
+- Build chatbots and intelligent apps
+- Store and analyze big data
+
+---
+
+## Azure Accounts & Subscriptions
+
+To use Azure, you need:
+
+- An **Azure account**
+- One or more **Azure subscriptions**
+
+### Azure Subscription
+
+A subscription:
+
+- Links to an **Azure account** (identity in Microsoft Entra ID or trusted directory)
+- Defines:
+  - **Billing boundary** (how you pay)
+  - **Access control boundary** (who can use what)
+- Is where you create **resource groups** and **resources**
+
+You can have:
+- One account → multiple subscriptions  
+  (e.g., Dev, Test, Prod, or department-based)
+
+---
+
+## Azure Free Account
+
+### Azure Free Account (for anyone)
+
+Includes:
+
+- Free access to popular Azure products for **12 months**
+- A **credit** to use for the first **30 days**
+- Access to **25+ always-free** services
+
+Requirements:
+- Phone number
+- Credit card (for identity verification only)
+- Microsoft or GitHub account
+
+You **won’t be charged** until you upgrade to a paid subscription or exceed free limits.
+
+---
+
+### Azure Free Student Account
+
+Includes:
+
+- Free access to certain Azure services for **12 months**
+- **$100 credit** for the first 12 months
+- Free access to **developer tools**
+
+Key difference:
+- **No credit card required**
+- Only for **students**
+
+---
+
+### BYOS (Bring Your Own Subscription)
+
+Many training modules use **BYOS**, meaning:
+
+- You use **your own subscription** to complete the exercises
+- You must:
+  - Perform **cleanup steps** at the end
+  - Delete resource groups/resources to **avoid charges**
+
+---
+
+## Interacting with Azure
+
+You can work with Azure using:
+
+- **Azure Portal (GUI)**
+- **Azure CLI** (Bash/PowerShell)
+- **Azure PowerShell**
+- **Azure Cloud Shell** (browser-based CLI)
+- **Azure CLI Interactive Mode**
+
+---
+
+### Azure Portal
+
+- Web-based graphical user interface:
+  - `https://portal.azure.com`
+- Use it to:
+  - Create, view, and manage resources
+  - Manage subscriptions, billing, access control
+  - Search for services and settings
+
+---
+
+### Azure Cloud Shell
+
+Cloud Shell is a **browser-based shell** running in Azure:
+
+- Accessed from the **portal top bar** (Cloud Shell icon)
+- Supports:
+  - **PowerShell** mode
+  - **Bash** mode
+
+You can switch between:
+- Type `pwsh` → PowerShell
+- Type `bash` → Bash
+
+Prompts:
+- PowerShell: `PS /home/...>`  
+- Bash: `username@azure:~$`
+
+Examples:
+
+```powershell
+# In PowerShell mode
+Get-Date        # Current date/time
+az version      # CLI version information
+```
+
+```bash
+# In Bash mode
+date            # Current date/time
+az upgrade      # Upgrade Azure CLI
+```
+
+> Note: `Get-Date` is PowerShell-only and fails in Bash.
+
+---
+
+### Azure CLI Interactive Mode
+
+Interactive mode makes CLI feel like an IDE:
+
+- Start with:
+
+```bash
+az interactive
+```
+
+Features:
+- Auto-completion
+- Command descriptions and examples
+- No need to prefix commands with `az` in interactive mode
+
+Exit with:
+
+```bash
+exit
+```
+
+---
+
+## Azure Physical Infrastructure
+
+Azure’s **physical infrastructure** is made up of:
+
+- Datacenters
+- Regions
+- Availability Zones
+- Region pairs
+- Sovereign regions
+
+### Datacenters
+
+- Physical buildings with:
+  - Servers, storage, networking
+  - Power, cooling, and security
+- Individual datacenters are **grouped** into regions and zones.
+
+---
+
+### Regions
+
+A **region** is:
+
+> A geographic area containing one or more datacenters, connected by low-latency networks.
+
+Examples:
+- East US
+- West Europe
+- Japan East
+- Australia East
+
+Key points:
+- You usually select a **region** when creating resources.
+- Some services are **global** (e.g., Entra ID, Traffic Manager, DNS) and don’t require region selection.
+- Some VM sizes and services are region-specific.
+
+---
+
+### Availability Zones (AZs)
+
+Availability Zones are:
+
+> **Physically separate datacenters** within the same region, each with its own power, cooling, and networking.
+
+Characteristics:
+
+- Minimum of **three zones** in zone-enabled regions.
+- Designed as **isolation boundaries**:
+  - If one zone fails, others stay up.
+- Connected via **high-speed private fiber**.
+
+Use Availability Zones to:
+
+- Increase **resilience** for mission-critical apps.
+- Spread resources across zones for high availability.
+
+Services and categories:
+
+- **Zonal services** (pinned to a zone):  
+  - VMs, managed disks, IPs
+- **Zone-redundant services** (replicated automatically):  
+  - Zone-redundant storage, SQL Database
+- **Non-regional services**:  
+  - Resilient to zone-wide and region-wide outages (e.g., some global services)
+
+> Note: There may be extra cost for duplicating resources and data across zones.
+
+---
+
+### Region Pairs
+
+Most regions are paired with another **region in the same geography**, at least ~300 miles apart.
+
+Purpose:
+- Cross-region replication for **disaster recovery**
+- Protection from large-scale events (natural disasters, regional outages)
+
+Benefits:
+- Azure prioritizes one region in a pair for recovery during major outages.
+- Planned updates roll out to only one region at a time.
+- Data typically stays within the same **geography** for compliance.
+
+Examples:
+- West US ↔ East US
+- Southeast Asia ↔ East Asia
+
+Caveats:
+- Some regions (like Brazil South, West India) have unique or one-direction pairings.
+- Many services do **not** automatically replicate across regions—you must configure DR.
+
+---
+
+### Sovereign Regions
+
+Sovereign regions are **isolated instances** of Azure used for compliance or legal requirements.
+
+Examples:
+- **US Gov regions** (US Gov Virginia, US Gov Iowa, US DoD Central):
+  - Physically and logically isolated
+  - Operated by screened US personnel
+- **China regions** (China East, China North):
+  - Operated via a partnership with 21Vianet
+  - Microsoft does not directly manage datacenters
+
+---
+
+## Azure Management Infrastructure
+
+The **management hierarchy** in Azure:
+
+1. **Management Groups**
+2. **Subscriptions**
+3. **Resource Groups**
+4. **Resources**
+
+---
+
+### Resources
+
+A **resource** is any Azure service instance:
+
+- VM
+- Storage account
+- Virtual network
+- Database
+- Function, Web App, etc.
+
+Resources are the smallest manageable item in Azure.
+
+---
+
+### Resource Groups
+
+A **resource group (RG)** is a **logical container** for resources.
+
+Key behaviors:
+
+- A resource **must** belong to **exactly one** resource group.
+- Resource groups:
+  - **Cannot** be nested.
+  - Can contain many different resource types.
+- Some resources can be moved to a different RG.
+
+Benefits:
+
+- Apply actions at RG level:
+  - Delete RG → deletes all resources inside.
+  - Apply RBAC/policies → inherited by all contained resources.
+- Good for:
+  - Grouping by lifecycle (dev/test/prod)
+  - Grouping by application or project
+  - Easier cleanup for temporary environments
+
+---
+
+### Subscriptions
+
+A **subscription** is a unit of:
+
+- **Billing**
+- **Scale**
+- **Access control**
+
+A subscription:
+
+- Is linked to an **Azure account** (identity in Entra ID).
+- Controls what resources you can create and where.
+- Aggregates **costs** per subscription.
+
+Two main boundary types:
+
+1. **Billing boundary**  
+   - Separate invoices per subscription.
+   - Useful for tracking costs by project, department, or environment.
+
+2. **Access control boundary**  
+   - RBAC can be applied at subscription scope.
+   - Different subscriptions can reflect different security models.
+
+You might create additional subscriptions to separate:
+
+- **Environments**: Dev, Test, Prod
+- **Departments**: Finance, Marketing, IT
+- **Compliance requirements**: Isolating sensitive workloads
+
+---
+
+### Management Groups
+
+**Management groups** sit **above subscriptions** in the hierarchy.
+
+They allow you to:
+
+- Group multiple subscriptions
+- Apply **policies and RBAC** that cascade down to:
+  - Child management groups
+  - Subscriptions
+  - Resource groups
+  - Resources
+
+Use cases:
+
+- Apply a **location policy** to all prod subscriptions.
+- Grant a user access to many subscriptions at once.
+- Enforce org-wide governance and compliance.
+
+Limits:
+
+- Up to **10,000** management groups per directory.
+- Up to **6 levels** deep (excluding root & subscriptions).
+- Each management group or subscription has **only one parent**.
+
+---
+
+## Exercise Summary — Create an Azure Resource (VM)
+
+High-level steps:
+
+1. Sign in to **Azure portal**
+2. Create a **Resource Group** named `IntroAzureRG`
+3. Create a **Virtual Machine**:
+   - Name: `my-VM`
+   - Region: default
+   - Authentication: Password (`azureuser` + custom password)
+   - Public inbound ports: None
+4. After deployment:
+   - Check `IntroAzureRG` RG
+   - Observe all related resources (VM, NIC, disk, NSG, etc.)
+5. Cleanup:
+   - Delete `IntroAzureRG` to remove **all** associated resources
+
+---
+
+## Module Assessment — Correct Answers
+
+### 1. How many resource groups can a resource be in at the same time?
+✔ **One**
+
+### 2. What happens when an action/setting is applied at the Resource Group level?
+✔ **The setting is applied to current and future resources.**
+
+### 3. What Azure feature replicates resources across regions at least 300 miles apart?
+✔ **Region pairs**
+
+# AZ-900 — Azure Compute, Networking & Application Hosting
+
+## Azure Virtual Machines (VMs)
+
+Azure Virtual Machines provide **Infrastructure as a Service (IaaS)**—a fully customizable virtual server in the cloud.
+
+### When to Use VMs
+Use Azure VMs when you need:
+
+- **Full control** over the OS  
+- Ability to install **custom software**  
+- **Custom hosting configurations**  
+- A classic **lift-and-shift** migration path  
+- Persistent workloads that don’t fit PaaS or serverless
+
+### VM Images
+A VM can be created from:
+
+- **Marketplace images** (Windows, Linux, development stacks)
+- **Custom images** (golden images, on-prem images you upload)
+
+Images allow rapid provisioning and consistent configs.
+
+### Scaling VMs in Azure
+Azure supports three main compute scaling strategies:
+
+#### 1. **Single VMs**
+Used for:
+- Dev/test  
+- Small workloads  
+
+#### 2. **Virtual Machine Scale Sets (VMSS)**
+Create & manage a group of **identical**, **load-balanced**, auto-scaling VMs.
+
+Key features:
+- Automatic increase/decrease in VM count  
+- Autoscaling based on CPU, memory, schedule, or custom metrics  
+- Built-in load balancer integration  
+- Ideal for big compute, stateless services, containers
+
+#### 3. **Availability Sets**
+Increase availability for multi-VM deployments by separating VMs across:
+
+- **Fault domains**  
+  - Different power sources & network switches  
+  - Protects from physical hardware failure  
+
+- **Update domains**  
+  - Ensures not all VMs are rebooted during updates  
+  - Allows maintenance without full outage  
+
+**You pay only for the VMs**, not for the availability set.
+
+### VM Use Cases
+Common VM scenarios:
+
+- **Testing & development** environments  
+- Running applications with **fluctuating demand**  
+- Extending **on-prem datacenter** into Azure  
+- **Disaster recovery** environments  
+- Lift-and-shift from physical servers
+
+### VM Resources (What You Configure)
+When creating a VM you select:
+
+- **Size** (vCPU count, RAM, optimized category)  
+- **Storage** (HDD/SSD, premium storage)  
+- **Networking** (VNet, NIC, IP address, NSG rules)
+
+---
+
+## Azure Virtual Desktop (AVD)
+
+Azure Virtual Desktop is a **desktop and application virtualization** service.
+
+### Key Features
+- Access a **cloud-hosted Windows desktop** from anywhere  
+- Supports Windows, macOS, Linux, browsers, and mobile clients  
+- Centralized security with **Microsoft Entra ID**  
+- MFA, RBAC, and isolation between sessions  
+- Supports **Windows 10/11 multi-session** (unique to AVD)
+
+### Benefits
+- Data stays in the cloud—not on user devices  
+- Ideal for remote workforces  
+- Centralized management and secure app delivery
+
+---
+
+## Azure Containers
+
+Containers are lightweight, portable environments that run applications **without managing a VM OS**.
+
+### VMs vs Containers
+| Feature | Virtual Machine | Container |
+|--------|-----------------|-----------|
+| OS | Full OS per VM | Shared host OS kernel |
+| Startup | Slow | Very fast |
+| Overhead | High | Low |
+| Best for | Full apps, custom OS configs | Microservices, scaling fast |
+
+### Options for Running Containers in Azure
+
+#### Azure Container Instances (ACI)
+- Run containers **without managing VMs**
+- Fastest way to deploy a single container  
+- Ideal for simple jobs, tasks, and microservices  
+- PaaS product
+
+#### Azure Container Apps
+- PaaS offering with:  
+  - Autoscaling  
+  - Load balancing  
+  - Revision control  
+- Great for microservices and event-driven workloads
+
+#### Azure Kubernetes Service (AKS)
+- Fully managed **Kubernetes** cluster  
+- Best for large containerized workloads  
+- Handles orchestration, scaling, deployment, networking
+
+### Containers in Microservice Architecture
+Containers allow you to split apps into components like:
+
+- frontend container  
+- backend container  
+- storage API container  
+
+Each part can scale independently.
+
+---
+
+## Azure Functions (Serverless Compute)
+
+Azure Functions is **event-driven**, **serverless** compute.
+
+### How It Works
+- Code runs **only when triggered**  
+- No VM or container to maintain  
+- Automatically scales based on events  
+- You are charged only for **actual execution time**
+
+### When to Use Azure Functions
+- Responding to REST API events  
+- Timer-based jobs  
+- Processing queues/messages  
+- Lightweight automation tasks  
+- Apps with **variable or unpredictable** load
+
+### Stateless vs Stateful
+- **Stateless** (default): function resets each call  
+- **Durable Functions**: maintain state across function calls  
+
+---
+
+## Application Hosting Options in Azure
+
+Azure provides multiple ways to host applications:
+
+- **Virtual Machines** (max control)
+- **Containers** (lightweight, portable)
+- **Azure App Service** (fully managed)
+
+### Azure App Service
+A PaaS offering for hosting:
+
+- Web apps  
+- REST APIs  
+- Mobile back ends  
+- Background jobs (WebJobs)
+
+Supports:
+- .NET, Node.js, Python, Java, PHP, Ruby  
+- Linux and Windows hosting  
+- Automatic scaling & load balancing  
+- CI/CD from GitHub, DevOps, or any Git server
+
+#### App Service Types
+- **Web Apps**  
+- **API Apps**  
+- **WebJobs**  
+- **Mobile Apps**
+
+---
+
+## Azure Virtual Networking (VNet)
+
+A VNet is an Azure-managed private network for hosting Azure resources.
+
+### Key Capabilities
+- Isolation & segmentation  
+- Communication between Azure resources  
+- Communication with the internet  
+- Hybrid connections (on-prem ↔ Azure)  
+- Traffic routing  
+- Traffic filtering  
+- Connecting VNets together
+
+### Public vs Private Endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| **Public endpoint** | Public IP; accessible from the internet |
+| **Private endpoint** | Private IP inside VNet; internal-only access |
+
+### Hybrid Connectivity Options
+
+#### Point-to-Site (P2S)
+- Connect individual computers to Azure  
+- Client-initiated encrypted VPN
+
+#### Site-to-Site (S2S)
+- Connect on-prem network to Azure  
+- Permanent encrypted tunnel  
+- Uses a VPN device or gateway
+
+#### ExpressRoute
+- Private, dedicated connection  
+- Avoids the public internet  
+- Best for high security, high throughput
+
+### Routing
+Azure automatically handles routing, but you can customize it:
+
+- **Route tables (UDR)** – override system routing  
+- **BGP support** – dynamic routing between on-prem and Azure
+
+### Traffic Filtering
+- **Network Security Groups (NSGs)**  
+- **Network Virtual Appliances (firewalls, WAN optimizers)**
+
+### VNet Peering
+Connect VNets directly via private Azure backbone network.
+
+- Very low latency  
+- Works across regions  
+- No public internet traversal
+
+---
+
+## Azure Virtual Private Networks (VPN)
+
+A VPN creates an encrypted tunnel over the internet.
+
+### Azure VPN Gateway
+Supports:
+
+- **Site-to-Site (S2S)**  
+- **Point-to-Site (P2S)**  
+- **VNet-to-VNet**  
+
+Limit: **one VPN gateway per virtual network**
+
+### Policy-Based vs Route-Based
+
+| Type | When Used |
+|------|-----------|
+| **Policy-based VPN** | Static IP filters, older devices |
+| **Route-based VPN** | Dynamic routing, multi-site, ExpressRoute coexistence |
+
+> **Route-based VPNs** are preferred in modern deployments.
+
+### High Availability VPN Options
+- **Active/Standby** (default)  
+- **Active/Active** (with BGP)  
+- **ExpressRoute failover**  
+- **Zone-redundant gateways**
+
+---
+
+## Azure ExpressRoute
+
+ExpressRoute is a **private** connection between your datacenter and Azure (not over the public internet).
+
+### Benefits
+- Higher reliability  
+- Higher security  
+- Consistent latency  
+- Faster speeds  
+- Private connection to:
+  - Azure services
+  - Microsoft 365
+  - Dynamics 365
+
+### Connectivity Models
+- Cloud Exchange (colocation)
+- Point-to-point Ethernet
+- Any-to-any (IP VPN integration)
+- ExpressRoute Direct (10/100 Gbps)
+
+---
+
+## Azure DNS
+
+Azure DNS hosts public and private DNS zones.
+
+### Benefits
+- High availability (global anycast network)
+- Fast DNS resolution
+- Azure RBAC support
+- Activity logs
+- Resource locking
+- Manage DNS via:
+  - Portal  
+  - PowerShell  
+  - CLI  
+  - REST API  
+
+### Private DNS Zones
+Allows custom FQDNs for internal VNets.
+
+### Alias Records
+Automatically update when the underlying resource IP changes.
+
+> Azure DNS **does not sell domain names** — buy domains via App Service Domains or 3rd-party registrars.
+
+---
+
+## Module Assessment — Correct Answers
+
+### 1. Which Azure VM feature staggers updates across VMs?
+✔ **Availability sets**
+
+### 2. Which service allows cloud-hosted Windows access from anywhere?
+✔ **Azure Virtual Desktop**
+
+### 3. Which VPN gateway type supports VNet-to-VNet, P2S, multisite, and ExpressRoute coexistence?
+✔ **Route-based VPN gateway**
+
+# AZ-900 — Azure Storage, Redundancy & Data Migration
+
+## Azure Storage Accounts
+
+A **storage account** gives you:
+
+- A **unique namespace** in Azure (global name)  
+- Access over **HTTP/HTTPS**  
+- Data that is **secure, highly available, durable, and massively scalable**
+
+### Storage Account Types
+
+| Type                        | Services Supported                                                                                   | Redundancy Options                  | Typical Usage |
+|----------------------------|------------------------------------------------------------------------------------------------------|-------------------------------------|---------------|
+| **Standard GPv2**          | Blobs (incl. Data Lake Gen2), Queues, Tables, Azure Files                                            | LRS, GRS, RA-GRS, ZRS, GZRS, RA-GZRS | Default choice; general use |
+| **Premium block blobs**    | Block blobs & append blobs (incl. Data Lake Gen2)                                                    | LRS, ZRS                            | High transaction rate, low latency |
+| **Premium file shares**    | Azure Files                                                                                          | LRS, ZRS                            | High-performance file shares (SMB + NFS) |
+| **Premium page blobs**     | Page blobs only                                                                                      | LRS                                 | High-performance disks (e.g., OS, DB VHDs) |
+
+### Storage Account Naming & Endpoints
+
+**Name rules:**
+
+- 3–24 characters  
+- Lowercase letters and numbers only  
+- Must be **globally unique** in Azure
+
+**Endpoint formats:**
+
+- Blob: `https://<account>.blob.core.windows.net`
+- Data Lake Gen2: `https://<account>.dfs.core.windows.net`
+- Files: `https://<account>.file.core.windows.net`
+- Queues: `https://<account>.queue.core.windows.net`
+- Tables: `https://<account>.table.core.windows.net`
+
+---
+
+## Azure Storage Redundancy
+
+Azure always stores **multiple copies** of your data. Key decisions:
+
+- How many copies **in the primary region**
+- Whether to **replicate to a secondary region**
+- Whether you need **read access** to the secondary region
+
+### Primary Region Redundancy
+
+#### Locally Redundant Storage (LRS)
+
+- 3 copies **within a single datacenter** in the primary region  
+- Durability: **11 nines** (99.999999999%) per year  
+- Protects against **rack/drive failures**  
+- Does **not** protect against full datacenter disaster (flood, fire)  
+- **Cheapest** option
+
+#### Zone-Redundant Storage (ZRS)
+
+- 3 synchronous copies across **three Availability Zones** in the primary region  
+- Durability: **12 nines** (99.9999999999%)  
+- Survives loss of a single AZ  
+- Still **read/write** available if one zone fails  
+- Good when you want **high availability** within a region and **data residency** in one region/country
+
+---
+
+### Secondary Region Redundancy
+
+Data can also be replicated to a **paired region** (Region Pair), hundreds of miles away.
+
+> Replication to secondary is **asynchronous** → recovery point objective (RPO) typically < 15 minutes (but not guaranteed in SLA).
+
+#### Geo-Redundant Storage (GRS)
+
+- Primary: LRS in primary region  
+- Secondary: LRS in paired region  
+- Durability: **16 nines** (99.99999999999999%)  
+- Acts like “LRS in two regions”
+
+#### Geo-Zone-Redundant Storage (GZRS)
+
+- Primary: ZRS (3 AZs) in primary region  
+- Secondary: LRS in paired region  
+- Durability: **16 nines**  
+- Best for **maximum availability, durability, and DR**
+
+#### Read-Access Options: RA-GRS / RA-GZRS
+
+- **RA-GRS** = GRS + read access to secondary  
+- **RA-GZRS** = GZRS + read access to secondary  
+- Secondary is **read-only** and **may lag** primary (RPO)
+
+---
+
+## Azure Storage Services Overview
+
+Main services:
+
+- **Azure Blobs** – object storage for text/binary, big data, logs, media  
+- **Azure Files** – managed file shares (SMB/NFS)  
+- **Azure Queues** – message-based communication between components  
+- **Azure Disks** – block storage for Azure VMs (managed disks)  
+- **Azure Tables** – NoSQL key-value store for structured, non-relational data
+
+### Benefits of Azure Storage
+
+- **Durable & Highly Available** — redundancy options, region pairs  
+- **Secure** — encryption at rest, access control  
+- **Massively Scalable**  
+- **Managed** — hardware & infra handled by Azure  
+- **Accessible** — REST APIs, SDKs, CLI, PowerShell, portal, Storage Explorer
+
+---
+
+## Azure Blob Storage
+
+Object storage for unstructured data:
+
+- Text, binary, media, logs, backups, etc.  
+- Ideal for:
+  - Serving files/images directly to browsers  
+  - Distributed file access  
+  - Streaming video/audio  
+  - Backup/DR/archiving  
+  - Data lakes & analytics
+
+Access via:
+
+- HTTP/HTTPS  
+- URL, REST API  
+- Client SDKs (C#, Java, Node, Python, etc.)  
+- CLI / PowerShell / Storage Explorer
+
+### Blob Access Tiers
+
+Used to **balance cost vs access frequency**.
+
+- **Hot**  
+  - Frequent access  
+  - Highest storage cost  
+  - Lowest access cost  
+
+- **Cool**  
+  - Infrequent access  
+  - Must store ≥ 30 days  
+  - Lower storage cost than Hot, higher access cost  
+
+- **Cold**  
+  - Even less frequent access  
+  - Must store ≥ 90 days  
+  - Cheaper storage than Cool, more expensive access  
+
+- **Archive**  
+  - Rarely accessed, long-term data  
+  - Must store ≥ 180 days  
+  - **Lowest storage cost**, highest access/rehydration cost, data offline  
+
+Notes:
+
+- Hot/Cool/Cold tiers can be set at **account level**.  
+- Hot/Cool/Cold/Archive tiers can be set at **blob level**.  
+- Archive requires **rehydration** before reading.
+
+---
+
+## Azure Files
+
+Azure Files provides **fully managed file shares** in the cloud.
+
+Protocols:
+
+- **SMB** (Windows/Linux/macOS)  
+- **NFS** (Linux/macOS)
+
+Key capabilities:
+
+- Mountable by Azure and on-prem servers  
+- Can be cached on Windows Server using **Azure File Sync**  
+- Fully managed — no patching, no hardware
+
+Use cases:
+
+- Lift-and-shift file shares  
+- Centralized file storage for apps  
+- Shared configs or content
+
+---
+
+## Azure Queues
+
+Azure Queue Storage:
+
+- Large number of messages  
+- Max message size ≈ **64 KB**  
+- Queue can hold millions of messages (limited by account capacity)  
+- Access via authenticated HTTP/HTTPS requests  
+
+Typical use:
+
+- **Asynchronous processing**  
+- Background job queues  
+- Triggering **Azure Functions** or other services when messages arrive
+
+---
+
+## Azure Disks
+
+Azure managed disks = **block-level** storage for VMs.
+
+- Like physical disks, but virtual and managed  
+- Types (Standard HDD, Standard SSD, Premium SSD, etc.)  
+- Used for OS disk, data disks, log disks
+
+---
+
+## Azure Tables
+
+Azure Table Storage:
+
+- NoSQL key/value store for **structured, non-relational data**  
+- Massive scale, simple schema  
+- Access via REST and SDKs  
+- Good for logs, configuration data, telemetry, etc.
+
+---
+
+## Exercise Concept: Create a Storage Account & Blob
+
+High-level idea (no need to memorize clicks):
+
+1. Create storage account (e.g. `IntroAzureRG`, LRS, Standard).  
+2. Create **container** (default: private).  
+3. Upload an image as a blob.  
+4. Try accessing the blob URL → fails (private).  
+5. Change container or blob access level to **Blob (anonymous read)**.  
+6. Access the URL again → image loads in browser.
+
+Key takeaway: **access level controls** whether blobs are publicly readable.
+
+---
+
+## Azure Data Migration Options
+
+### Azure Migrate (Online Migration)
+
+Azure Migrate is a hub for moving workloads from on-prem or other clouds to Azure.
+
+Provides:
+
+- **Unified migration platform** in one portal  
+- **Discovery & assessment** (Azure Migrate: Discovery and assessment)  
+- **Server migration** (Azure Migrate: Server Migration)  
+- Integration with:
+  - Data Migration Assistant  
+  - Azure Database Migration Service  
+  - App Service Migration Assistant  
+  - Third-party/ISV tools
+
+Use Azure Migrate for:
+
+- Assessing on-prem VMs/servers/databases  
+- Planning and performing **online migrations** of apps/infra
+
+### Azure Data Box (Offline Migration)
+
+Data Box = **physical device** shipped to you by Microsoft.
+
+- Up to **80 TB** usable capacity per device  
+- You copy data to the device, ship it back, Azure uploads it into your storage  
+- Disks are wiped per **NIST 800-88r1** after use  
+
+Best for:
+
+- > 40 TB of data  
+- Poor or limited network connectivity  
+- One-time, periodic, or initial-bulk + incremental migrations
+
+Use cases:
+
+- One-time migration of large datasets  
+- Move media libraries, VM farms, SQL data, historical data  
+- DR export or compliance exports  
+- Migrating data back on-prem or to another provider
+
+---
+
+## Azure File Movement Tools (Smaller Scale / Ongoing)
+
+### AzCopy
+
+- **Command-line** utility  
+- Copy blobs/files to/from storage, between accounts, or between clouds  
+- Supports **one-way sync** (source → destination only)
+
+### Azure Storage Explorer
+
+- **GUI** app (Windows/macOS/Linux)  
+- Manage blobs, files, queues, tables  
+- Uses AzCopy under the hood  
+- Good for interactive uploads/downloads/moves
+
+### Azure File Sync
+
+- Syncs **on-prem Windows Server file shares** ↔ **Azure Files**  
+- Bi-directional sync  
+- Often used to centralize file shares in Azure while keeping local cache
+
+Key features:
+
+- Use on-prem protocols: SMB, NFS, FTPS  
+- Multiple caches/servers around the world  
+- Cloud tiering: frequently used files cached locally; cold files kept in Azure
+
+---
+
+## Module Assessment — Correct Answers
+
+1. **Which tool automatically keeps files between an on-premises Windows server and Azure cloud updated?**  
+   ✔ **Azure File Sync**
+
+2. **Which storage redundancy option provides the highest degree of durability, with 16 nines of durability?**  
+   ✔ **Geo-zone-redundant storage (GZRS)**
+
+3. **Which Azure Storage service supports big data analytics, as well as handling text and binary data types?**  
+   ✔ **Azure Blobs**
+
+# AZ-900 — Identity, Security & Defender for Cloud
+
+## Microsoft Entra ID & Directory Services
+
+### What is Microsoft Entra ID?
+
+Microsoft Entra ID is Microsoft’s **cloud-based identity and access management (IDAM)** service.
+
+- Authenticates users to:
+  - Microsoft cloud apps (Azure, Microsoft 365, Dynamics 365, etc.)
+  - Custom/cloud apps you build
+- Microsoft runs the service globally; you control **identities, groups, access**
+
+If you already know **on-prem AD DS**, Entra ID is the **cloud directory equivalent**.
+
+#### Who uses Entra ID?
+
+- **IT admins** – control access, enforce policies, MFA, Conditional Access
+- **App developers** – add SSO/OAuth/OpenID Connect to apps
+- **Users** – manage their identity, self-service password reset (SSPR)
+- **Online service subscribers** – Microsoft 365 / Azure / Dynamics users already use Entra ID
+
+#### What does Entra ID provide?
+
+- **Authentication**
+  - Sign-in to apps and resources
+  - MFA, SSPR, banned password list, smart lockout
+- **Single Sign-On (SSO)**
+  - One identity → many apps
+  - Easier onboarding/offboarding; access tied to identity
+- **Application management**
+  - Integrate SaaS apps, custom apps, Application Proxy, My Apps portal
+- **Device management**
+  - Device registration and join
+  - Works with Intune & Conditional Access (device-based rules)
+
+---
+
+## Hybrid Identity: Entra Connect & Entra Domain Services
+
+### Entra Connect (Sync On-Prem AD + Cloud)
+
+Problem: Separate identities on-prem and in the cloud.
+
+**Solution: Microsoft Entra Connect**
+
+- Syncs users/groups from **on-prem AD DS → Entra ID**
+- Supports **hybrid** identity:
+  - On-prem accounts
+  - Cloud accounts
+  - SSO across both
+- Enables:
+  - Same credentials both places
+  - MFA, SSPR, Conditional Access, etc. for synced accounts
+
+### Microsoft Entra Domain Services (Managed Domain)
+
+Entra Domain Services = **managed domain controllers in Azure**.
+
+Provides:
+
+- Domain join
+- Group Policy
+- LDAP
+- Kerberos / NTLM
+
+Key points:
+
+- Microsoft deploys **two Windows Server DCs** (replica set) in your chosen region
+- You don’t manage/patch DCs; Azure handles:
+  - Backups
+  - Patching
+  - Disk encryption
+- **One-way sync**:
+  - Entra ID → Entra Domain Services
+  - Changes **do not** sync back from Domain Services to Entra ID
+- Great for:
+  - **Lift-and-shift legacy apps** that require classic AD protocols
+  - Use existing identities & groups from Entra ID without maintaining DCs in the cloud
+
+---
+
+## Azure Authentication Methods
+
+### What is Authentication?
+
+Authentication = **proving who you are** (user/service/device), using credentials.
+
+Azure supports:
+
+- Passwords
+- Single Sign-On (SSO)
+- Multifactor Authentication (MFA)
+- Passwordless methods (Hello, Authenticator, FIDO2)
+
+### Single Sign-On (SSO)
+
+SSO = sign in **once**, reuse that identity for multiple apps.
+
+Benefits:
+
+- Users manage **one password** instead of many
+- Easier:
+  - Access control
+  - Onboarding / offboarding
+- Security model simplified: everything tied to **one identity**
+
+Note: SSO is only as secure as the **initial authentication**.
+
+### Multifactor Authentication (MFA)
+
+MFA = requiring **two or more factors**:
+
+- Something you **know** – password, PIN, secret answer
+- Something you **have** – phone, token, code, hardware key
+- Something you **are** – biometric (fingerprint, face)
+
+Benefits:
+
+- Protects even if password is stolen
+- Greatly increases security vs. single-factor
+
+**Microsoft Entra MFA** = Entra’s MFA implementation:
+- Extra prompts: phone call, SMS, app notification, etc.
+
+### Passwordless Authentication
+
+Goal: **High security + high convenience**.
+
+Passwordless = removing the password, using:
+
+- Something you **have** (device / key)
+- PLUS something you **are** or **know** (PIN, biometric)
+
+Three main Entra passwordless options:
+
+1. **Windows Hello for Business**
+   - Biometric or PIN tied to a specific Windows device
+   - SSO to on-prem and cloud resources
+2. **Microsoft Authenticator app**
+   - Phone becomes passwordless credential
+   - User approves notification + PIN/biometric
+3. **FIDO2 security keys**
+   - Hardware keys (USB, NFC, Bluetooth)
+   - Standards-based, unphishable, no passwords
+
+---
+
+## Azure External Identities
+
+**External identity** = user/device/service **outside** your organization.
+
+**Microsoft Entra External ID** lets you:
+
+- Collaborate with partners/vendors/suppliers
+- Let external users **use their own identity provider**
+  - Corporate Entra ID, another IDP, or social identity (Google, Facebook, etc.)
+- You control **access via Entra ID / Entra B2C**, not their home directory
+
+Main capabilities:
+
+1. **B2B collaboration**
+   - Invite external users as **guests** into your tenant
+   - They use their own identity; you grant them access to your resources
+2. **B2B direct connect**
+   - Two-way trust between Entra organizations
+   - Used for **Teams shared channels**
+   - External users remain in their own tenant; not stored as guests in your directory
+3. **Azure AD B2C (now Entra External ID for customers)**
+   - For **consumer-facing apps**
+   - Manage sign-up/sign-in for external customers with social or local accounts
+
+Extra: You can use **access reviews** to periodically re-certify guest access and remove those who no longer need it.
+
+---
+
+## Conditional Access
+
+**Conditional Access** = Entra feature that allows or blocks access **based on signals**.
+
+Signals can include:
+
+- User or group
+- Location
+- Device state (compliant or not)
+- Application
+- Risk level, etc.
+
+Flow:
+
+1. **Collect signals** (who/where/what device/app)
+2. **Make decision**:
+   - Allow
+   - Block
+   - Require MFA
+   - Require compliant device
+3. **Enforce** decision
+
+Use cases:
+
+- Require MFA for:
+  - Admins only
+  - Users outside corporate network
+  - High-risk sign-ins / unknown locations
+- Limit access to **approved client apps only**
+- Allow access **only from managed/compliant devices**
+- Block access from **untrusted locations** or devices
+
+---
+
+## Azure Role-Based Access Control (RBAC)
+
+**RBAC** = fine-grained authorization to Azure resources.
+
+Principle: **Least privilege**  
+→ Grant only the **minimum permissions** required to do the job.
+
+### Key Concepts
+
+- **Role** – set of permissions (e.g., Reader, Contributor, Owner)
+- **Scope** – where the role applies:
+  - Management group  
+  - Subscription  
+  - Resource group  
+  - Resource
+
+Hierarchy = inheritance:
+
+- Grant role at **higher scope** → applies to **all child scopes**
+  - Owner at management group → controls all subscriptions under it
+  - Reader at subscription → can view all RGs and resources in that subscription
+
+RBAC is enforced through **Azure Resource Manager** (portal, CLI, PowerShell, etc.).
+
+**Allow model**:
+
+- If multiple roles are assigned, the user gets the **union** of all permissions
+  - Example:
+    - Role 1: read
+    - Role 2: write
+    - Role 3: read+write  
+    → Effective permissions: **read and write**
+
+---
+
+## Security Models: Zero Trust & Defense-in-Depth
+
+### Zero Trust
+
+Zero Trust assumes:
+
+- **“Assume breach”** as default
+- Every request is treated as if it’s from an **untrusted network**
+
+Guiding principles:
+
+1. **Verify explicitly**
+   - Authenticate and authorize with all available signals: identity, location, device, service, data, etc.
+2. **Use least privilege access**
+   - JIT/JEA (Just-In-Time / Just-Enough-Access)
+   - Adaptive policies
+   - Data protection mechanisms
+3. **Assume breach**
+   - Segment networks
+   - Minimize blast radius
+   - End-to-end encryption
+   - Strong monitoring and analytics
+
+Traditional model: inside corporate network == “trusted”  
+Zero Trust: **everything must authenticate**, even inside.
+
+### Defense-in-Depth
+
+Defense-in-depth = **multiple security layers** protecting the data at the center.
+
+Layers (from outer to inner):
+
+1. **Physical**
+   - Secure datacenters, restricted access, guards, hardware security
+2. **Identity and Access**
+   - SSO, MFA, Conditional Access, RBAC, logging
+3. **Perimeter**
+   - DDoS protection, perimeter firewalls
+4. **Network**
+   - NSGs, segmentation, “deny by default”, VPN/ExpressRoute, private endpoints
+5. **Compute**
+   - Secure VMs, patching, endpoint protection
+6. **Application**
+   - Secure coding, vulnerability scanning, secret storage (Key Vault)
+7. **Data**
+   - Encryption, access control, backup/restore, compliance
+
+Goal: if one layer is breached, **other layers still protect the data**.
+
+---
+
+## Microsoft Defender for Cloud
+
+**Defender for Cloud** = Azure’s **cloud security posture management (CSPM)** + **threat protection** tool.
+
+Scope:
+
+- **Azure**, **on-prem**, and **multicloud** (AWS, GCP) via Azure Arc & connectors
+
+### Main Functions: Assess, Secure, Defend
+
+1. **Continuously Assess**
+   - Vulnerability scanning for:
+     - VMs / servers
+     - Containers / registries
+     - SQL, etc.
+   - Integrates with **Defender for Endpoint** for deeper vulnerability info
+   - Gives you a view of your **security posture**
+
+2. **Secure**
+   - Uses **Azure Policy** + **Azure Security Benchmark**
+   - Continuously looks for:
+     - Misconfigurations
+     - Non-compliant resources
+   - Provides **recommendations** to harden workloads
+   - Tracks posture via **Secure Score**:
+     - Higher = better security posture
+     - Recommendations grouped into **security controls**
+
+3. **Defend**
+   - **Threat protection & alerts**:
+     - For VMs, SQL, Storage, containers, web apps, networks, etc.
+   - Alerts include:
+     - What resource is affected
+     - Details and remediation guidance
+   - Supports **fusion kill-chain analysis** → correlates related alerts into a single attack story
+   - Advanced features:
+     - JIT VM access
+     - Adaptive application controls (allowlist)
+     - Network hardening
+
+### Protection Everywhere
+
+- Azure services: monitored **natively**, no extra agent in many cases
+- On-prem / other clouds:
+  - Use **Azure Arc** to onboard machines
+  - CSPM extends to AWS & GCP (no agent for posture), plus:
+    - Defender for Servers → AWS EC2
+    - Defender for Containers → Amazon EKS
+- Supports multicloud secure score and unified inventory
+
+---
+
+## Module Assessment — Correct Answers
+
+1. **Which Microsoft Entra tool can vary the credentials needed to log in based on signals, such as where the user is located?**  
+   ✔ **Conditional Access**
+
+2. **Which security model assumes the worst-case security scenario, and protects resources accordingly?**  
+   ✔ **Zero Trust**
+
+3. **A user is simultaneously assigned multiple roles that use RBAC. Roles: 1 = read, 2 = write, 3 = read and write. What are their actual permissions?**  
+   ✔ **Read and write**
